@@ -1,0 +1,297 @@
+1- coulominar cipher algorithm
+static String alphabets = "abcdefghijklmnopqrstuvwxyz";
+
+        public static String couluminar_cipher_encreption(String plain_text, String key)
+        {
+            String cipher_text = "";
+            while (plain_text.Length % key.Length != 0)
+            {
+                plain_text += '!';
+            }
+            int y = 0;
+            char[,] array = new char[plain_text.Length / key.Length, key.Length];
+            for (int i = 0; i < plain_text.Length / key.Length; i++)
+            {
+                for (int j = 0; j < key.Length; j++)
+                    array[i, j] = plain_text[y++];
+            }
+
+            int[] array_numbers = new int[key.Length];
+            int t = 1;
+            int yy=0;
+            foreach (char c in alphabets)
+            {
+                for (int i = 0; i < key.Length; i++)
+                {
+                    if (c == key[i])
+                        array_numbers[i] = yy++;
+                }
+            }
+
+            
+            int index;
+            for (int i = 0; i < key.Length; i++)
+            {
+                index = Array.IndexOf(array_numbers, i);
+                for (int j = 0; j < plain_text.Length / key.Length; j++)
+                {
+                    cipher_text += array[j, index];
+                }
+            }
+            
+            
+            return cipher_text;
+        }
+
+
+        public static String couluminar_cipher_decreption(String cipher_text,String key)
+        {
+            String plain_text = "";
+            int y = 0;
+            char[,] array = new char[cipher_text.Length / key.Length, key.Length];
+            char[,] array2 = new char[cipher_text.Length / key.Length, key.Length];
+            for (int j = 0; j < key.Length; j++)
+            {
+                for (int i = 0; i < cipher_text.Length / key.Length; i++)
+                {
+                    array[i,j] = cipher_text[y];
+                    array2[i,j] = cipher_text[y];
+                    y++;
+                }
+            }
+
+            int[] array_numbers = new int[key.Length];
+            int t = 1;
+            int yy = 0;
+            foreach (char c in alphabets)
+            {
+                for (int i = 0; i < key.Length; i++)
+                {
+                    if (c == key[i])
+                        array_numbers[i] = yy++;
+                }
+            }
+            
+            int index;
+            for (int i = 0; i < key.Length; i++)
+            {
+                index = Array.IndexOf(array_numbers, i);
+                for (int j = 0; j < cipher_text.Length / key.Length; j++)
+                {
+                    array2[j,index] = array[j, i];
+                }
+            }
+           
+            for (int i = 0; i < cipher_text.Length / key.Length; i++)
+            {
+                for (int j = 0; j < key.Length; j++)
+                    plain_text += array2[i, j];
+                
+            }
+
+
+
+            return plain_text;
+        }
+
+=========================================================================================================================================
+2-vigenere cipher algorithm
+public static String vigenere_encreption(String plain_text, String key)
+        {
+            String cipher_text = "";
+            int n, n_key, j = -1;
+
+            foreach (char c in plain_text)
+            {
+
+                if (j < key.Length-1)
+                {
+                    j++;
+                    n = (int)c - (int)'a';
+                    n_key = (int)key[j] - (int)'a';
+                    
+                    cipher_text += Convert.ToChar(((n + n_key) % 26) + (int)'a');
+                    
+                }
+                else
+                {
+                    j = 0;
+                    n = (int)c - (int)'a';
+                    n_key = (int)key[j] - (int)'a';
+
+                    cipher_text += Convert.ToChar(((n + n_key) % 26) + (int)'a');
+                    
+                }
+                //Console.WriteLine(j);
+            }
+
+            return cipher_text;
+        }
+
+
+        public static String vigenere_decreption(String cipher_text, String key)
+        {
+            String plain_text = "";
+            int n, n_key, j = -1;
+            int y;
+            foreach (char c in cipher_text)
+            {
+                if (j < key.Length-1)
+                {
+                    j++;
+                    n = (int)c - (int)'a';
+                    n_key = (int)key[j] - (int)'a';
+                    y = n - n_key;
+                    if (y < 0)
+                        y = y + 26;
+                    plain_text += Convert.ToChar((y % 26) + (int)'a');
+                    
+                }
+                else
+                {
+                    j = 0;
+                    n = (int)c - (int)'a';
+                    n_key = (int)key[j] - (int)'a';
+                    y = n - n_key;
+                    if (y < 0)
+                        y = y + 26;
+                    plain_text += Convert.ToChar((y % 26) + (int)'a');
+                }
+
+                
+            }
+            return plain_text;
+        }
+=======================================================================================================
+3-multiplicative cipher algorithm
+public static String multiplicative_encreption(String plane_text, int key)
+        {
+            String cipher_text = "";
+            char c1;
+            int n;
+            foreach (char c in plane_text)
+            {
+                n = (int)c - (int)'a';
+                n = ((n * key) % 26) + (int)'a';
+                //Console.WriteLine("hey "+n);
+                c1 = Convert.ToChar(n);
+                cipher_text += c1;
+            }
+
+
+            return cipher_text;
+        }
+        public static String multiplicative_decreption(String cipher_text, int key)
+        {
+            String plain_text = "";
+            char c1;
+            int n;
+            foreach (char c in cipher_text)
+            {
+                n = (int)c-(int)'a';
+                //equation is p=(c*k^-1)%26
+                n = (n * modInverse(key, 26) % 26) + (int)'a';
+                c1 = Convert.ToChar(n);
+                plain_text += c1;
+            }
+
+
+            return plain_text;
+        }
+
+
+
+        static int modInverse(int a, int n)
+        {
+            int i = n, v = 0, d = 1;
+            while (a > 0)
+            {
+                int t = i / a, x = a;
+                a = i % x;
+                i = x;
+                x = d;
+                d = v - t * x;
+                v = x;
+            }
+            v %= n;
+            if (v < 0) v = (v + n) % n;
+            return v;
+        }
+        static int GCD(int[] numbers)
+        {
+            return numbers.Aggregate(GCD);
+        }
+
+        static int GCD(int a, int b)
+        {
+            return b == 0 ? a : GCD(b, a % b);
+        }
+
+-------------------------------------------------
+Mmdouh Marof, [5/31/2022 4:28 AM]
+static char[,] char_array = new char[27, 27];
+        public static void filling_matrix()
+        {
+            
+            int counter=0,counter2 = 0;
+            for(int i=1;i<27;i++)
+            {
+                counter2 = counter;
+                for (int j=1;j<27;j++)
+                {
+                    char_array[i, j] = alphabets[counter2];
+                    counter2 = (counter2 + 1) % 26;
+                }
+                counter = (counter + 1) % 26;
+            }
+        }
+
+        public static void filling_matrix_boarders()
+        {
+            char_array[0, 0] = '!';
+            for (int i=1;i<27;i++)
+            {
+                char_array[0, i] = alphabets[i - 1];
+                char_array[i,0] = alphabets[i - 1];
+            }
+        }
+
+        static String vigenere_encreption_with_table(String plain_text,String key)
+        {
+            String cipher_text = "";
+            int n,n2;
+            int key_counter = 0;
+            for(int i=0; i<plain_text.Length;i++)
+            {
+                n = (int)plain_text[i] - (int)'a';
+                n2 = (int)key[key_counter++] - (int)'a';
+                key_counter = key_counter % key.Length;
+                cipher_text += char_array[n2 + 1, n + 1];
+            }
+
+
+            return cipher_text;
+        }
+
+Mmdouh Marof, [5/31/2022 4:41 AM]
+static String vigenere_decryprion_with_table(String cipher_text, String key)
+        {
+            String plain_text = "";
+            int n, n2;
+            int key_counter = 0;
+            for (int i = 0; i < cipher_text.Length; i++)
+            {
+                n = (int)cipher_text[i] - (int)'a';
+                n2 = (int)key[key_counter++] - (int)'a';
+                key_counter = key_counter % key.Length;
+                for(int j=1;j<27;j++)
+                {
+                    if (char_array[n2 + 1, j] == cipher_text[i])
+                        plain_text += char_array[0, j];
+                    
+                }
+                
+            }
+            
+            return plain_text;
+        }
